@@ -23,3 +23,9 @@ async def run_task_monitor_useme():
 async def read_root():
     await task_monitor_useme()
     return {"Hello": "World"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

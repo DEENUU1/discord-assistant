@@ -1,4 +1,6 @@
 import os
+import re
+
 from dotenv import load_dotenv
 import discord
 
@@ -32,6 +34,7 @@ async def send_message_to_channel(message: str, channel_id: int):
     if not channel:
         print(f"Channel with ID {channel_id} not found.")
         return
+
     await channel.send(message)
 
 

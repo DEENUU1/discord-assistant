@@ -1,10 +1,9 @@
-import os
-
-from fastapi import FastAPI, Query
-from pydantic import BaseModel
-from bot import client, send_message_to_channel, TOKEN
+from fastapi import FastAPI
+from bot import client, TOKEN
 import asyncio
-from enum import Enum
+from fastapi_utilities import repeat_every
+
+from useme import task_monitor_useme
 
 app = FastAPI()
 
@@ -14,16 +13,13 @@ async def startup_event():
     asyncio.create_task(client.start(TOKEN))
 
 
-class ChannelEnum(str, Enum):
-    GENERAL = str(os.getenv("CHANNEL_GENERAL", 0))
-    USEME = str(os.getenv("CHANNEL_USEME", 0))
+@app.on_event("startup")
+@repeat_every(seconds=3600)
+async def run_task_monitor_useme():
+    await task_monitor_useme()
 
 
-class MessageInputSchema(BaseModel):
-    content: str
-
-
-@app.post("/message")
-async def send_message(message: MessageInputSchema, channel_id: ChannelEnum = Query(...)):
-    await send_message_to_channel(message.content, int(channel_id))
-    return {"status": "success"}
+@app.get("/")
+async def read_root():
+    await task_monitor_useme()
+    return {"Hello": "World"}

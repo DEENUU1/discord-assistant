@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 
 def get_new_offers(category_url: str) -> Optional[list[dict]]:
     try:
-        response = requests.get(os.getenv("USEME_API_URL"), data={"url": category_url})
+        response = requests.post(os.getenv("USEME_API_URL"), data={"url": category_url})
 
         if response.status_code == 200:
             return response.json()
